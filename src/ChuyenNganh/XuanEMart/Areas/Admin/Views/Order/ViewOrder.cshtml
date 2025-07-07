@@ -1,0 +1,91 @@
+﻿@model IEnumerable<OrderDetails>
+@{
+    ViewData["title"] = "Chi tiết đơn hàng";
+    decimal total = 0;
+    decimal subtotal = 0;
+}
+@section naviheader {
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/orders" class="nav-link">Chi tiết đơn hàng @ViewData["OrderCode"]</a>
+        </li>
+    </ul>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-sm-6">
+                <h1 class="display-6">Danh sách đặt hàng</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/admin" class="text-primary">Home</a></li>
+                    <li class="breadcrumb-item active">Chi tiết đơn hàng</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="card shadow">
+        <div class="card-body">
+            <!-- Table for Order Details -->
+            <h4 class="text-center text-uppercase text-secondary mb-4">Chi tiết đơn hàng</h4>
+            <!-- Thông tin khách hàng -->
+            @if (ViewData["BillingAddress"] is XuanEmart.Models.BillingAddressModel billingAddress)
+            {
+                    <div class="card-body">
+                        <p class="mb-2">
+                            <strong>Thông tin khách hàng: </strong>@billingAddress.FullName - @billingAddress.PhoneNumber,
+                        @($"{billingAddress.SpecificAddress} - ( {billingAddress.Ward} - {billingAddress.District} - {billingAddress.Province} )")
+                        </p>
+                    </div>
+            }
+
+            <table class="table table-hover table-striped">
+                <thead class="thead-primary">
+                    <tr>
+                        <th scope="col">Tên sản phẩm</th>
+                        <th scope="col">Tên khách hàng</th>
+                        <th scope="col">Giá sản phẩm</th>
+                        <th scope="col">Số lượng</th>
+                        <th scope="col">Tổng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            subtotal = item.Quantity * item.Price;
+                            total += subtotal;
+                            <tr>
+                                <input type="hidden" asp-for="@item.OrderCode" class="getId" />
+                                <td>@item.Product.Name</td>
+                                <td>@item.UserName</td>
+                                <td>@item.Price.ToString("#, ##0 VNĐ")</td>
+                                <td>@item.Quantity</td>
+                                <td>@subtotal.ToString("#, ##0 VNĐ")</td>
+                            </tr>
+                        }
+                    }
+                    <tr class="font-weight-bold">
+                        <td colspan="4" class="text-right">Tổng:</td>
+                        <td>@total.ToString("#, ##0 VNĐ")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <a class="btn btn-primary" asp-action="ExportOrderToPdf" asp-route-ordercode="@ViewData["OrderCode"]">
+        Xuất Đơn Hàng PDF
+    </a>
+</section>

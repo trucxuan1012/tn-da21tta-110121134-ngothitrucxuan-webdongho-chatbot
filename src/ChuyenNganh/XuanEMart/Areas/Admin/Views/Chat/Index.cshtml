@@ -1,0 +1,173 @@
+@{
+    ViewData["Title"] = "Quản lý Chatbot";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Quản lý Chatbot</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                    <li class="breadcrumb-item active">Chatbot</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Quản lý Chatbot</h3>
+        </div>
+        <div class="card-body">
+            <div id="chatbot-admin-panel">
+                <table class="table table-bordered" id="admin-conversation-table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>UserId</th>
+                            <th>Loại user</th>
+                            <th>Trạng thái bot</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-conversation-list">
+                        <!-- Dữ liệu sẽ được load bằng JS -->
+                    </tbody>
+                </table>
+                <div id="admin-chat-detail" style="display:none; margin-top:30px;">
+                    <h5>Lịch sử hội thoại</h5>
+                    <div id="admin-chat-messages" style="height:300px;overflow-y:auto;border:1px solid #eee;padding:10px;background:#fafafa;"></div>
+                    <div class="input-group mt-2">
+                        <input type="text" id="admin-reply-input" class="form-control" placeholder="Nhập tin nhắn trả lời...">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" id="admin-reply-send">Gửi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script>
+let currentConversationId = null;
+let currentUserId = null;
+
+function loadConversations() {
+    $.get('/api/chat/pending-conversations', function(data) {
+        let html = '';
+        data.forEach(function(conv) {
+            let isGuest = conv.userId && conv.userId.startsWith('guest_');
+            html += `<tr>
+                <td>${conv.conversationId}</td>
+                <td>${conv.userId}</td>
+                <td>${isGuest ? '<span class="badge badge-warning">Guest</span>' : '<span class="badge badge-success">User</span>'}</td>
+                <td>
+                    <span class="badge badge-${conv.isBotHandled ? 'success' : 'secondary'}">${conv.isBotHandled ? 'Bật' : 'Tắt'}</span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-${conv.isBotHandled ? 'warning' : 'success'} toggle-bot-btn" data-id="${conv.conversationId}" data-status="${conv.isBotHandled}">${conv.isBotHandled ? 'Tắt bot' : 'Bật bot'}</button>
+                    <button class="btn btn-sm btn-info view-chat-btn" data-id="${conv.conversationId}" data-userid="${conv.userId}">Xem</button>
+                </td>
+            </tr>`;
+        });
+        $('#admin-conversation-list').html(html);
+    });
+}
+
+function loadChatDetail(conversationId, userId) {
+    $.get('/api/chat/get-conversation/' + userId, function(data) {
+        currentConversationId = conversationId;
+        currentUserId = userId;
+        $('#admin-chat-messages').empty();
+        if (data && data.messages) {
+            data.messages.forEach(function(msg) {
+                let align = msg.senderType === 'admin' ? 'text-right' : (msg.senderType === 'bot' ? 'text-center' : 'text-left');
+                let color = msg.senderType === 'admin' ? '#d70018' : (msg.senderType === 'bot' ? '#888' : '#007bff');
+                $('#admin-chat-messages').append(`<div class="${align}" style="margin-bottom:8px;"><span style="display:inline-block;padding:6px 14px;border-radius:16px;background:${color};color:#fff;max-width:80%;word-break:break-word;">${msg.message}</span></div>`);
+            });
+        }
+        $('#admin-chat-detail').show();
+        $('#admin-reply-input').val('');
+        // Auto scroll to bottom
+        setTimeout(function () {
+            let chatBox = document.getElementById('admin-chat-messages');
+            if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+        }, 300);
+    });
+}
+
+$(function() {
+    loadConversations();
+    setInterval(loadConversations, 10000); // Tự động refresh danh sách hội thoại mỗi 10s
+
+    $(document).on('click', '.toggle-bot-btn', function() {
+        let id = $(this).data('id');
+        let status = $(this).data('status');
+        $.ajax({
+            url: '/api/chat/toggle-bot',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ conversationId: id, isBotHandled: !status }),
+            success: function() {
+                loadConversations();
+            }
+        });
+    });
+
+    $(document).on('click', '.view-chat-btn', function() {
+        let id = $(this).data('id');
+        let userId = $(this).data('userid');
+        loadChatDetail(id, userId);
+    });
+
+    $('#admin-reply-send').click(function() {
+        let text = $('#admin-reply-input').val().trim();
+        if (!text || !currentConversationId) return;
+        $.ajax({
+            url: '/api/chat/admin-reply',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ conversationId: currentConversationId, adminId: '@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value', message: text }),
+            success: function() {
+                loadChatDetail(currentConversationId, currentUserId);
+            }
+        });
+    });
+
+    // SignalR connection
+    let chatConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/chathub")
+        .build();
+
+    chatConnection.on("ReceiveMessage", function (msg) {
+        // Luôn reload nếu đang xem đúng hội thoại
+        if (currentConversationId && msg.ConversationId == currentConversationId) {
+            loadChatDetail(currentConversationId, currentUserId);
+        }
+        setTimeout(function () {
+            let chatBox = document.getElementById('admin-chat-messages');
+            if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+        }, 300);
+    });
+
+    chatConnection.start().then(function () {
+        // Join SignalR group for this conversation khi xem chi tiết
+        $(document).on('click', '.view-chat-btn', function() {
+            let id = $(this).data('id');
+            chatConnection.invoke("JoinConversation", id.toString());
+        });
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+});
+</script>
+}

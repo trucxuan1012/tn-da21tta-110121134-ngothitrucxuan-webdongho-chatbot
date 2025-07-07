@@ -1,0 +1,155 @@
+﻿@model IEnumerable<OrderModel>
+@{
+    ViewData["title"] = "Danh sách đặt hàng";
+    decimal total = 0;
+    decimal subtotal = 0;
+}
+@section naviheader {
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/orders" class="nav-link">Đơn đặt hàng</a>
+        </li>
+    </ul>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Danh sách đặt hàng</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                    <li class="breadcrumb-item active">Đơn đặt hàng</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+    
+        <div class="card-body">
+            <table class=" table table-hover">
+                <thead>
+                    <tr>
+                        <th>Order Code</th>
+                        <th>UserName</th>           
+                        <th>Order Date</th>
+                        <th>Order Satus</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+
+                            <tr>
+                                <td>@item.OrderCode</td>
+                                <td>@item.UserName</td>
+                                <td>@item.CreatedDate</td>
+
+
+                               <td>
+                                    <select class="form-control select-update-order" data-ordercode="@item.OrderCode" style="width: auto;">
+                                        <option value="1" selected="@(item.Status == 1)">Chờ xác nhận</option>
+                                        <option value="0" selected="@(item.Status == 0)">Đang xử lý</option>
+                                        <option value="2" selected="@(item.Status == 2)">Đang vận chuyển</option>
+                                        <option value="3" selected="@(item.Status == 3)">Giao hàng thành công</option>
+                                        <option value="4" selected="@(item.Status == 4)">Giao hàng thất bại</option>
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <a class="btn btn-sm btn-success" asp-action="ViewOrder" asp-controller="Order" asp-route-ordercode="@item.OrderCode">Xem</a>
+                                    <form asp-action="DeleteOrder" asp-controller="Order" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?');">
+                                        <input type="hidden" name="ordercode" value="@item.OrderCode" />
+                                        <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                                    </form>
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">
+                                Không có bản ghi nào!
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @* paging *@
+    @{
+        Paginate pager = new Paginate();
+
+        int pageNo = 0;
+
+        if (ViewBag.Pager != null)
+        {
+            pager = ViewBag.Pager;
+            pageNo = pager.CurrentPage;
+        }
+    }
+    <partial name="_paging" model="@pager" />
+
+</section>
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('.select-update-order').change(function () {
+                var status = $(this).val(); // Lấy giá trị trạng thái mới
+                var ordercode = $(this).data('ordercode'); // Lấy mã đơn hàng
+
+                // Gửi AJAX request để cập nhật trạng thái đơn hàng
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("UpdateOrder", "Order")",
+                    data: { ordercode: ordercode, status: status },
+                    success: function (result) {
+                        if (result.success) {
+                            Swal.fire({
+                                title: "Thành công",
+                                text: "Cập nhật trạng thái đơn hàng thành công!",
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Lỗi",
+                                text: "Không thể cập nhật trạng thái đơn hàng.",
+                                icon: "error",
+                                confirmButtonText: "OK"
+                            });
+                        }
+                    },
+                    error: function (req, status, error) {
+                        Swal.fire({
+                            title: "Lỗi",
+                            text: "Đã xảy ra lỗi khi cập nhật trạng thái đơn hàng.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

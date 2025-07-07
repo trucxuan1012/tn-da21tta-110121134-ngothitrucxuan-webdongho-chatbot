@@ -1,0 +1,38 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<dynamic>
+@{
+    ViewData["Title"] = "Thống kê danh mục";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var labels = Model.Select(c => c.Name).ToArray();
+    var data = Model.Select(c => c.ProductCount).ToArray();
+}
+
+<h2 class="text-center">📊 Thống kê số lượng sản phẩm theo danh mục</h2>
+<canvas id="categoryChart" width="600" height="300"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(Json.Serialize(labels)),
+            datasets: [{
+                label: 'Số lượng sản phẩm',
+                data: @Html.Raw(Json.Serialize(data)),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0 // Tránh số thập phân
+                    }
+                }
+            }
+        }
+    });
+</script>

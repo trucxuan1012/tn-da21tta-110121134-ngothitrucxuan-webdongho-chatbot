@@ -1,0 +1,74 @@
+﻿@model AppUserModel
+@{
+    ViewData["title"] = "Chỉnh sửa Người dùng";
+}
+@section naviheader {
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/home" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/brand" class="nav-link">Người dùng</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/brand/create" class="nav-link">Chỉnh sửa</a>
+        </li>
+    </ul>
+}
+<div class="card card-primary" style="margin: 10px;">
+    <div class="card-header">
+        <h3 class="card-title">Chỉnh sửa Người dùng</h3>
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <form asp-action="Edit" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id"/>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="card-body">
+
+            <div class="form-group">
+                <label>Tên Người dùng</label>
+                <input asp-for="UserName" required class="form-control" placeholder="Nhập tên Người dùng">
+                <span asp-validation-for="UserName" class="text-danger" />
+            </div>
+
+            <div class="form-group">
+                <label>Số điện thoại</label>
+                <input asp-for="PhoneNumber" required class="form-control" placeholder="Nhập Số điện thoại">
+                <span asp-validation-for="PhoneNumber" class="text-danger" />
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input asp-for="Email" required class="form-control" placeholder="Nhập Email">
+                <span asp-validation-for="Email" class="text-danger" />
+            </div>
+
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input asp-for="PasswordHash" readonly class="form-control" placeholder="Nhập Mật khẩu">
+                <span asp-validation-for="PasswordHash" class="text-danger" />
+            </div>
+
+            <div class="form-group">
+                <label>Roles</label>
+                <select asp-for="RoleId" required class="form-control" asp-items="ViewBag.Roles"></select>
+                <span asp-validation-for="RoleId" class="text-danger" />
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-primary">Xác nhận</button>
+        </div>
+    </form>
+</div>
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

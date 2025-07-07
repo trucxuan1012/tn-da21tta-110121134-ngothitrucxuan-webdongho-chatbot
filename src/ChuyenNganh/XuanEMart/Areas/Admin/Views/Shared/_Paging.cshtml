@@ -1,0 +1,33 @@
+﻿@model XuanEmart.Models.Paginate;
+
+<div class="container">
+    @if (ViewBag.Pager.TotalPages > 0) // Kiểm tra nếu có nhiều hơn 1 trang
+    {
+        <ul class="pagination justify-content-end">
+            @if (ViewBag.Pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-pg="1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-pg="@(ViewBag.Pager.CurrentPage - 1)">Previous</a>
+                </li>
+            }
+            @for (var pge = ViewBag.Pager.StartPage; pge <= ViewBag.Pager.EndPage; pge++)
+            {
+                <li class="page-item @(pge == ViewBag.Pager.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-pg="@pge">@pge</a>
+                </li>
+            }
+            @if (ViewBag.Pager.CurrentPage < ViewBag.Pager.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-pg="@(ViewBag.Pager.CurrentPage + 1)">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-pg="@(ViewBag.Pager.TotalPages)">Last</a>
+                </li>
+            }
+        </ul>
+    }
+</div>

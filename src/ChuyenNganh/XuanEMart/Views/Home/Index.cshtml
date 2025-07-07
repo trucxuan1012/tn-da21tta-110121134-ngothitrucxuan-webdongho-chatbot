@@ -1,0 +1,455 @@
+﻿@model IEnumerable<ProductModel>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+	    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+		    @TempData["SuccessMessage"]
+		    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+		    </button>
+	    </div>
+    }
+
+    <!-- product section -->
+	<div id="product-section" class="mt-150 mb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 text-center">
+                    <div class="section-title">
+                        <h3><span class="orange-text">Sản phẩm</span> của chúng tôi</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, fuga quas itaque eveniet beatae optio.</p>
+                    </div>
+                </div>
+            </div>
+
+		<div class="row">
+			@foreach (var item in Model)
+			{
+				<div class="col-lg-4 col-md-6 text-center">
+					<div class="single-product-item">
+						<div class="product-image">
+							<a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id">
+								<img class="product-img" src="~/media/products/@item.Image" alt="@item.Name">
+							</a>
+						</div>
+						<h3 class="product-name" style="height: 75px;">@item.Name</h3>
+						<p class="product-price">
+							<span style="font-weight: bold">Giá sản phẩm: </span>
+							<span class="price-value" style="color: #d70018;">@item.Price.ToString("#, ##0 VNĐ")</span>
+						</p>
+						<a href="cart.html" class="cart-btn">
+							<i class="fas fa-shopping-cart"></i> Add to Cart
+						</a>
+					</div>
+				</div>
+			}
+		</div>
+
+
+        </div>
+    </div>
+    <!-- end product section -->
+
+	<!-- cart banner section -->
+	<section class="cart-banner pt-100 pb-100">
+		<div class="container">
+			<div class="row clearfix">
+				<!--Image Column-->
+				<div class="image-column col-lg-6">
+					<div class="image">
+						<div class="price-box">
+							<div class="inner-price">
+								<span class="price">
+									<strong>30%</strong>
+								</span>
+							</div>
+						</div>
+					<img src="~/backend/images/bn1.jpg" alt="">
+					</div>
+				</div>
+				<!--Content Column-->
+				<div class="content-column col-lg-6">
+					<h3><span class="orange-text">Giảm sâu</span> trong tháng này</h3>
+					<h4>Lịch lãm và sang trọng </h4>
+				<div class="text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, fuga quas itaque eveniet beatae optio.</div>
+					<!--Countdown Timer-->
+					<div class="time-counter"><div class="time-countdown clearfix" data-countdown="2024/12/01"><div class="counter-column"><div class="inner"><span class="count">00</span>Days</div></div> <div class="counter-column"><div class="inner"><span class="count">00</span>Hours</div></div>  <div class="counter-column"><div class="inner"><span class="count">00</span>Mins</div></div>  <div class="counter-column"><div class="inner"><span class="count">00</span>Secs</div></div></div></div>
+					<a href="shop.html" class="cart-btn mt-3"><i class="fas fa-shopping-cart"></i> Mua ngay</a>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- end cart banner section -->
+
+	<!-- testimonail-section -->
+	<div class="testimonail-section mt-150 mb-150">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-10 offset-lg-1 text-center">
+					<div class="testimonial-sliders">
+						<div class="single-testimonial-slider">
+							<div class="client-avater">
+								<img src="assets/img/avaters/avatar1.png" alt="">
+							</div>
+							<div class="client-meta">
+								<h3>Saira Hakim <span>Local shop owner</span></h3>
+								<p class="testimonial-body">
+									" Sed ut perspiciatis unde omnis iste natus error veritatis et  quasi architecto beatae vitae dict eaque ipsa quae ab illo inventore Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium "
+								</p>
+								<div class="last-icon">
+									<i class="fas fa-quote-right"></i>
+								</div>
+							</div>
+						</div>
+						<div class="single-testimonial-slider">
+							<div class="client-avater">
+								<img src="assets/img/avaters/avatar2.png" alt="">
+							</div>
+							<div class="client-meta">
+								<h3>David Niph <span>Local shop owner</span></h3>
+								<p class="testimonial-body">
+									" Sed ut perspiciatis unde omnis iste natus error veritatis et  quasi architecto beatae vitae dict eaque ipsa quae ab illo inventore Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium "
+								</p>
+								<div class="last-icon">
+									<i class="fas fa-quote-right"></i>
+								</div>
+							</div>
+						</div>
+						<div class="single-testimonial-slider">
+							<div class="client-avater">
+								<img src="assets/img/avaters/avatar3.png" alt="">
+							</div>
+							<div class="client-meta">
+								<h3>Jacob Sikim <span>Local shop owner</span></h3>
+								<p class="testimonial-body">
+									" Sed ut perspiciatis unde omnis iste natus error veritatis et  quasi architecto beatae vitae dict eaque ipsa quae ab illo inventore Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium "
+								</p>
+								<div class="last-icon">
+									<i class="fas fa-quote-right"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end testimonail-section -->
+	
+	<!-- advertisement section -->
+	<div class="abt-section mb-150">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6 col-md-12">
+					@* <div class="abt-bg">
+						<a href="https://www.youtube.com/watch?v=DBLlFWYcIGQ" class="video-play-btn popup-youtube"><i class="fas fa-play"></i></a>
+					</div> *@
+				</div>
+				<div class="col-lg-6 col-md-12">
+					<div class="abt-text">
+						<p class="top-sub">Từ năm 2003</p>
+						<h2>Chúng tôi là <span class="orange-text">XuannShop</span></h2>
+						<p>Etiam vulputate ut augue vel sodales. In sollicitudin neque et massa porttitor vestibulum ac vel nisi. Vestibulum placerat eget dolor sit amet posuere. In ut dolor aliquet, aliquet sapien sed, interdum velit. Nam eu molestie lorem.</p>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente facilis illo repellat veritatis minus, et labore minima mollitia qui ducimus.</p>
+						<a href="/About" class="boxed-btn mt-4">Tìm hiểu thêm</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end advertisement section -->
+	
+	<!-- shop banner -->
+	<section class="shop-banner">
+    	<div class="container">
+        	<h3>Tháng 12 Sale sập sàn! <br> with big <span class="orange-text">khuyến mãi...</span></h3>
+            <div class="sale-percent"><span>Giảm! <br> lên đến</span>50% <span>off</span></div>
+            @* <a href="shop.html" class="cart-btn btn-lg">Mua ngay</a> *@
+        </div>
+    </section>
+	<!-- end shop banner -->
+
+	<!-- latest news -->
+	<div class="latest-news pt-150 pb-150">
+		<div class="container">
+
+			<div class="row">
+				<div class="col-lg-8 offset-lg-2 text-center">
+					<div class="section-title">	
+						<h3><span class="orange-text">Tin tức mới từ</span> Chúng tôi</h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, fuga quas itaque eveniet beatae optio.</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-4 col-md-6">
+					<div class="single-latest-news">
+						<a href="single-news.html"><div class="latest-news-bg news-bg-1"></div></a>
+						<div class="news-text-box">
+							<h3><a href="single-news.html">You will vainly look for fruit on it in autumn.</a></h3>
+							<p class="blog-meta">
+								<span class="author"><i class="fas fa-user"></i> Admin</span>
+								<span class="date"><i class="fas fa-calendar"></i> 2024</span>
+							</p>
+							<p class="excerpt">Vivamus lacus enim, pulvinar vel nulla sed, scelerisque rhoncus nisi. Praesent vitae mattis nunc, egestas viverra eros.</p>
+							<a href="single-news.html" class="read-more-btn">read more <i class="fas fa-angle-right"></i></a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-12 text-center">
+					<a href="news.html" class="boxed-btn">More News</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end latest news -->
+
+<!-- Chatbot Widget -->
+<style>
+#chatbot-widget {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 350px;
+    max-width: 90vw;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+#chatbot-header {
+    background: #d70018;
+    color: #fff;
+    padding: 12px 16px;
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#chatbot-close {
+    cursor: pointer;
+    font-size: 18px;
+}
+#chatbot-messages {
+    height: 320px;
+    overflow-y: auto;
+    padding: 12px;
+    background: #fafafa;
+    font-size: 15px;
+}
+#chatbot-input-area {
+    display: flex;
+    border-top: 1px solid #eee;
+    background: #fff;
+}
+#chatbot-input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    font-size: 15px;
+    outline: none;
+}
+#chatbot-send {
+    background: #d70018;
+    color: #fff;
+    border: none;
+    padding: 0 18px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#chatbot-send:hover {
+    background: #b80015;
+}
+.chatbot-msg {
+    margin-bottom: 10px;
+    display: flex;
+}
+.chatbot-msg.user { justify-content: flex-end; }
+.chatbot-msg.bot { justify-content: flex-start; }
+.chatbot-bubble {
+    padding: 8px 14px;
+    border-radius: 16px;
+    max-width: 80%;
+    word-break: break-word;
+}
+.chatbot-msg.user .chatbot-bubble {
+    background: #d70018;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+.chatbot-msg.bot .chatbot-bubble {
+    background: #f1f1f1;
+    color: #222;
+    border-bottom-left-radius: 4px;
+}
+#chatbot-toggle-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #d70018;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+    z-index: 9998;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+
+@{
+    var userId = User.Identity.IsAuthenticated ? User.FindFirst("sub")?.Value ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value : null;
+}
+<button id="chatbot-toggle-btn" title="Chat với shop"><i class="fas fa-comments"></i></button>
+<div id="chatbot-widget" style="display:none;">
+    <div id="chatbot-header">
+        <span>Hỗ trợ khách hàng</span>
+        <span id="chatbot-close">&times;</span>
+    </div>
+    <div id="chatbot-messages"></div>
+    <div id="chatbot-input-area">
+        <input type="text" id="chatbot-input" placeholder="Nhập tin nhắn..." autocomplete="off" />
+        <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<script>
+function generateGuid() {
+    // Tạo GUID chuẩn và thêm prefix 'guest_'
+    const guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+    return 'guest_' + guid;
+}
+
+var chatbotUserId = '@userId';
+if (!chatbotUserId || chatbotUserId === '' || chatbotUserId === 'null' || chatbotUserId === 'undefined') {
+    chatbotUserId = localStorage.getItem('chatbotUserId');
+    if (!chatbotUserId) {
+        chatbotUserId = generateGuid();
+        localStorage.setItem('chatbotUserId', chatbotUserId);
+    }
+}
+
+function appendMessage(sender, text) {
+    // Nếu là user hoặc guest thì căn phải, còn lại (bot, admin) thì căn trái/giữa
+    var msgClass = (sender === 'user' || sender === 'guest') ? 'user' : 'bot';
+    var bubble = `<div class="chatbot-msg ${msgClass}"><div class="chatbot-bubble">${text}</div></div>`;
+    $('#chatbot-messages').append(bubble);
+    $('#chatbot-messages').scrollTop($('#chatbot-messages')[0].scrollHeight);
+}
+
+function loadConversation() {
+    $.get('/api/chat/get-conversation/' + chatbotUserId, function(data) {
+        $('#chatbot-messages').empty();
+        if (data && data.messages) {
+            data.messages.forEach(function(msg) {
+                appendMessage(msg.senderType, msg.message);
+            });
+        }
+    });
+}
+
+function sendMessage() {
+    var text = $('#chatbot-input').val().trim();
+    if (!text) return;
+    appendMessage('user', text);
+    $('#chatbot-input').val('');
+    $.ajax({
+        url: '/api/chat/send-message',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ userId: chatbotUserId, message: text }),
+        success: function (data) {
+            setTimeout(loadConversation, 500);
+        },
+        error: function () {
+            appendMessage('bot', 'Xin lỗi, có lỗi xảy ra.');
+        }
+    });
+}
+
+$(function () {
+    $('#chatbot-toggle-btn').click(function () {
+        $('#chatbot-widget').show();
+        $('#chatbot-toggle-btn').hide();
+        loadConversation();
+    });
+    $('#chatbot-close').click(function () {
+        $('#chatbot-widget').hide();
+        $('#chatbot-toggle-btn').show();
+    });
+    $('#chatbot-send').click(sendMessage);
+    $('#chatbot-input').keypress(function (e) {
+        if (e.which === 13) sendMessage();
+    });
+
+    // SignalR connection for user chat
+    let userChatConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/chathub")
+        .build();
+
+    userChatConnection.on("ReceiveMessage", function (msg) {
+        // Luôn reload khi có tin nhắn mới liên quan đến hội thoại này
+        loadConversation();
+        setTimeout(function () {
+            var chatBox = document.getElementById('chatbot-messages');
+            if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+        }, 300);
+    });
+
+    userChatConnection.start().then(function () {
+        // Join SignalR group for this conversation
+        $.get('/api/chat/get-conversation/' + chatbotUserId, function(data) {
+            if (data && data.conversationId) {
+                userChatConnection.invoke("JoinConversation", data.conversationId.toString());
+            }
+        });
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+});
+</script>
+
+@section Scripts
+{
+ <script>
+		$('.add-to-cart').click(function () {
+			var Id = $(this).data("product_id");
+
+			$.ajax({
+				type: "POST",
+				url: "@Url.Action("Add", "Cart")", 
+				data: { Id: Id },
+				success: function (result) {
+					if (result) {
+						Swal.fire("Thêm vào giỏ hàng thành công");
+					} else {
+						Swal.fire("Có lỗi xảy ra, vui lòng thử lại.");
+					}
+				},
+				error: function (req, status, error) {
+					console.log("Lỗi thêm vào giỏ hàng", error);
+					Swal.fire("Lỗi khi thêm vào giỏ hàng, vui lòng thử lại.");
+				}
+			});
+		});
+
+ </script>
+}

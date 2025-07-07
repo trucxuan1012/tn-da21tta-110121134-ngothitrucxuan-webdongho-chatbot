@@ -1,0 +1,49 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IdentityRole
+
+@{
+    ViewData["title"] = "Thêm mới Role";
+}
+@section naviheader {
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/home" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/brand" class="nav-link">Role</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/brand/create" class="nav-link">Thêm mới</a>
+        </li>
+    </ul>
+}
+<div class="card card-primary" style="margin: 10px;">
+    <div class="card-header">
+        <h3 class="card-title">Thêm mới Role</h3>
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="card-body">
+            <div class="form-group">
+                <label>Tên Role</label>
+                <input asp-for="Name" class="form-control" placeholder="Nhập tên Role">
+                <span asp-validation-for="Name" class="text-danger" />
+            </div>       
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-primary">Xác nhận</button>
+        </div>
+    </form>
+</div>
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
